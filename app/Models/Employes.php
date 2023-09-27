@@ -16,7 +16,7 @@ class Employes extends Model
     public function scopewithRelation($query) {
         return $query
             ->leftJoin('positions as m1', 'employes.position_id', 'm1.id')
-            ->leftJoin('satkers as m1=2', 'employes.satker_id', 'm2.id')
+            ->leftJoin('satkers as m2', 'employes.satker_id', 'm2.id')
             ->select(
                 'employes.rfid',
                 'employes.name',

@@ -19,7 +19,7 @@ class EmployeRepository implements EmployeContract
   public function getAllPayload(array $payload)
   {
     try {
-      $data = $this->employeModel->all();
+      $data = $this->employeModel->withRelation()->get();
       return $this->success($data, "success getting data");
 
     } catch (\Throwable $th) {
