@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\UniqueExceptCurrent;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -15,12 +16,21 @@ class UserRequest extends FormRequest
 
     public function rules()
     {
-        return [
-            'name'     => 'required|max:150',
-            'username' => 'required|max:50|unique_except_current:users,username,' . $this->route('user'),
-            'scope'    => 'required|max:25',
-            'password' => 'required|max:20|min:5|confirmed'
+        $rules = [
+            'name' => ['required', 'max:150'],
+            'scope' => ['required', 'max:25'],
+            'username' => ['required', 'max:50', 'min:5'],
+            'password' => ['required', 'max:20', 'min:5', 'confirmed'],
+            // ... tambahkan aturan validasi lainnya
         ];
+
+        // Cek keberadaan id dalam request
+        if (!$this->has('id')) {
+            $id = $this->input('id');
+            $rules['username'][] = new UniqueExceptCurrent('users', 'username', $this->input('username'), 'id', $id);
+        }
+
+        return $rules;
     }
 
     protected function failedValidation(Validator $validator)

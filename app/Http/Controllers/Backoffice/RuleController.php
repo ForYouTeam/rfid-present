@@ -10,22 +10,22 @@ use Illuminate\Http\Request;
 
 class RuleController extends Controller
 {
-    private RuleContract $positionRepo;
+    private RuleContract $ruleRepo;
     public function __construct()
     {
-        $this->positionRepo = new RuleRepository;
+        $this->ruleRepo = new RuleRepository;
     }
 
     public function getAllData()
     {
-        $result = $this->positionRepo->getAllPayload([]);
+        $result = $this->ruleRepo->getAllPayload([]);
 
         return response()->json($result, $result['code']);
     }
 
     public function getDataById(int $id)
     {
-        $result = $this->positionRepo->getPayloadById($id);
+        $result = $this->ruleRepo->getPayloadById($id);
 
         return response()->json($result, $result['code']);
     }
@@ -33,14 +33,14 @@ class RuleController extends Controller
     public function upsertData(RuleRequest $request)
     {
         $id = $request->id | null;
-        $result = $this->positionRepo->upsertPayload($id, $request->all());
+        $result = $this->ruleRepo->upsertPayload($id, $request->all());
 
         return response()->json($result, $result['code']);
     }
 
     public function deleteData(int $id)
     {
-        $result = $this->positionRepo->deletePayload($id);
+        $result = $this->ruleRepo->deletePayload($id);
         return response()->json($result, $result['code']);
     }
 }

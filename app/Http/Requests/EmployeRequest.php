@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\UniqueExceptCurrent;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -15,16 +16,23 @@ class EmployeRequest extends FormRequest
 
     public function rules()
     {
-        return [
-            'rfid'        => 'required|max:20|unique_except_current:employes,rfid,' . $this->route('employe'),
-            'name'        => 'required|max:150',
-            'nirp'        => 'required|max:20|unique_except_current:employes,nirp,' . $this->route('employe'),
-            'nik'         => 'required|max:20|unique_except_current:employes,nik,' . $this->route('employe'),
-            'sex'         => 'required|max:20',
-            'position_id' => 'required',
-            'satker_id'   => 'required',
-            'kls'         => 'required|max:150'
+        $rules = [
+            'rfid' => ['required', 'max:20'],
+            'nirp' => ['required', 'max:20'],
+            'nik' => ['required', 'max:20'],
+            // ... tambahkan aturan validasi lainnya
         ];
+
+        // Cek keberadaan id dalam request
+        if (!$this->has('id')) {
+            $id = $this->input('id');
+            $rules['rfid'][] = new UniqueExceptCurrent('employes', 'rfid', $this->input('rfid'), 'id', $id);
+            $rules['nirp'][] = new UniqueExceptCurrent('employes', 'nirp', $this->input('nirp'), 'id', $id);
+            $rules['nik'][] = new UniqueExceptCurrent('employes', 'nik', $this->input('nik'), 'id', $id);
+            // ... tambahkan aturan validasi lainnya yang perlu diterapkan saat mengedit
+        }
+
+        return $rules;
     }
 
     protected function failedValidation(Validator $validator)
