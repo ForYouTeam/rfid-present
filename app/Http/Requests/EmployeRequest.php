@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class UserRequest extends FormRequest
+class EmployeRequest extends FormRequest
 {
     public function authorize()
     {
@@ -16,10 +16,14 @@ class UserRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'     => 'required|max:150',
-            'username' => 'required|max:50|unique_except_current:users,username,' . $this->route('user'),
-            'scope'    => 'required|max:25',
-            'password' => 'required|max:20|min:5|confirmed'
+            'rfid'        => 'required|max:20|unique_except_current:employes,rfid,' . $this->route('employe'),
+            'name'        => 'required|max:150',
+            'nirp'        => 'required|max:20|unique_except_current:employes,nirp,' . $this->route('employe'),
+            'nik'         => 'required|max:20|unique_except_current:employes,nik,' . $this->route('employe'),
+            'sex'         => 'required|max:20',
+            'position_id' => 'required',
+            'satker_id'   => 'required',
+            'kls'         => 'required|max:150'
         ];
     }
 

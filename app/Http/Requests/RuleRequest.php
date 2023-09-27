@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class UserRequest extends FormRequest
+class RuleRequest extends FormRequest
 {
     public function authorize()
     {
@@ -16,10 +16,9 @@ class UserRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'     => 'required|max:150',
-            'username' => 'required|max:50|unique_except_current:users,username,' . $this->route('user'),
-            'scope'    => 'required|max:25',
-            'password' => 'required|max:20|min:5|confirmed'
+            'type'  => 'required|max:25',
+            'tag'   => 'required|max:25',
+            'value' => 'required|max:50',
         ];
     }
 
