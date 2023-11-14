@@ -18,6 +18,7 @@ class Employes extends Model
             ->leftJoin('positions as m1', 'employes.position_id', 'm1.id')
             ->leftJoin('satkers as m2', 'employes.satker_id', 'm2.id')
             ->select(
+                'employes.id',
                 'employes.rfid',
                 'employes.name',
                 'employes.nirp',

@@ -17,6 +17,10 @@ class RulesSeeder extends Seeder
     public function run()
     {
         $now = Carbon::now();
+        $startTime = Carbon::now();
+        $startTime->setHour(8);
+        $startTime->setMinute(0);
+        $startTime->setSecond(0);
         $endTime = Carbon::now();
         $endTime->setHour(17);
         $endTime->setMinute(0);
@@ -25,7 +29,7 @@ class RulesSeeder extends Seeder
         Rules::create([
             'type'       => 'present_time',
             'tag'        => 's_time',
-            'value'      => $now,
+            'value'      => $startTime->toTimeString(),
             'created_at' => $now,
             'updated_at' => $now
         ]);
@@ -33,7 +37,7 @@ class RulesSeeder extends Seeder
         Rules::create([
             'type'       => 'present_time',
             'tag'        => 'e_time',
-            'value'      => $endTime,
+            'value'      => $endTime->toTimeString(),
             'created_at' => $now,
             'updated_at' => $now
         ]);

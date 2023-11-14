@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Backoffice\EmployeController;
 use App\Http\Controllers\Backoffice\PositionController;
+use App\Http\Controllers\Backoffice\PresentListController;
 use App\Http\Controllers\Backoffice\RuleController;
 use App\Http\Controllers\Backoffice\SatkerController;
 use App\Http\Controllers\Backoffice\UserController;
@@ -40,4 +41,9 @@ Route::prefix('v1/employe')->controller(EmployeController::class)->group(functio
     Route::get('/{id}', 'getDataById');
     Route::post('/', 'upsertData');
     Route::delete('/{id}', 'deleteData');
+});
+
+Route::prefix('v1/present')->controller(PresentListController::class)->group(function() {
+    Route::get('/', 'getAllData');
+    Route::get('/set', 'setPresentData');
 });

@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->date('present_date');
             $table->time('start_in');
-            $table->time('start_out');
-            $table->string('status', 2);
+            $table->time('start_out')->nullable();
+            $table->string('status', 15);
             $table->foreignId('employe_id')->nullable()->constrained('employes')->onDelete('set null');
             $table->foreignId('grouping_by')->nullable()->constrained('satkers')->onDelete('set null');
             $table->text('description')->nullable();
