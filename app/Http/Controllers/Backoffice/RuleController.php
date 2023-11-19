@@ -16,6 +16,21 @@ class RuleController extends Controller
         $this->ruleRepo = new RuleRepository;
     }
 
+    public function index() {
+        $result = $this->ruleRepo->getAllPayload([]);
+        $result = collect($result['data'])->map(function ($item) {
+            return [
+                "id" => $item->id,
+                "type" => $item->type,
+                "tag" => $item->tag,
+                "value" => $item->value,
+                "created_at" => $item->created_at,
+                "updated_at" => $item->updated_at,
+            ];
+        });
+        return view('Pages.Rules')->with('list', $result);
+    }
+
     public function getAllData()
     {
         $result = $this->ruleRepo->getAllPayload([]);

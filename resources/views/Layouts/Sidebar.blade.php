@@ -51,7 +51,7 @@
         </div>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="pages/tables/basic-table.html">
+        <a class="nav-link" href="{{ route('rule.index') }}">
           <span class="menu-title">Pengaturan</span>
           <i class="mdi mdi-table-large menu-icon"></i>
         </a>

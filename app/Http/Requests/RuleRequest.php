@@ -16,9 +16,9 @@ class RuleRequest extends FormRequest
     public function rules()
     {
         return [
-            'type'  => 'required|max:25',
-            'tag'   => 'required|max:25',
-            'value' => 'required|max:50',
+            '*.type'  => 'required|max:25',
+            '*.tag'   => 'required|max:25',
+            '*.value' => 'required|max:50',
         ];
     }
 

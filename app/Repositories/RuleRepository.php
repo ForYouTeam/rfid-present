@@ -6,6 +6,7 @@ use App\Contracts\RuleContract;
 use App\Models\Rules;
 use App\Traits\HttpResponseModel;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class RuleRepository implements RuleContract
 {
@@ -48,33 +49,41 @@ class RuleRepository implements RuleContract
   {
     try {
       $now = Carbon::now();
-      if ($id) {
-        $find = $this->getPayloadById($id);
-        if ($find['code'] !== 200) {
-          return $find;
+      DB::beginTransaction();
+      
+      $resultData = [];
+      foreach ($payload as $value) {
+        if ($value['id'] ?? null) {
+          $find = $this->getPayloadById($value['id']);
+          if ($find['code'] !== 200) {
+            return $find;
+          }
+  
+          $payload['updated_at'] = $now; 
+          $result = [
+            'data' => $this->ruleModel->whereId($value['id'])->update($value),
+            'message' => 'Updated data successfully'
+          ];
+          
+        } else {
+          $payload['created_at'] = $now;
+          $payload['updated_at'] = $now;
+          $result = [
+            'data' => $this->ruleModel->create($value),
+            'message' => 'Created data successfully'
+          ];
+  
         }
-
-        $payload['updated_at'] = $now; 
-        $result = [
-          'data' => $this->ruleModel->whereId($id)->update($payload),
-          'message' => 'Updated data successfully'
-        ];
-        
-      } else {
-        $payload['created_at'] = $now;
-        $payload['updated_at'] = $now;
-        $result = [
-          'data' => $this->ruleModel->create($payload),
-          'message' => 'Created data successfully'
-        ];
-
+        array_push($resultData, $result);
       }
-      return $this->success($result['data'], $result['message']);
 
+      DB::commit();
     } catch (\Throwable $th) {    
+      DB::rollBack();
       return $this->error($th->getMessage(), 500, $th, class_basename($this), __FUNCTION__ );
 
     }
+    return $this->success($resultData, 'Created data successfully');
   }
 
   public function deletePayload(int $id)
