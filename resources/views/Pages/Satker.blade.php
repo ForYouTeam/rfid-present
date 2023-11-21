@@ -1,13 +1,13 @@
 @extends('Layouts.Base')
 @section('title')
-    : Posisi
+    : Satuan Kerja
 @endsection
 @section('content')
     <div class="page-header">
-        <h3 class="page-title"> List Pengaturan </h3>
+        <h3 class="page-title"> List Satuan Kerja </h3>
         <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item active" aria-current="page">posisi</li>
+            <li class="breadcrumb-item active" aria-current="page">satker</li>
         </ol>
         </nav>
     </div>
@@ -15,7 +15,7 @@
         <div class="card-body">
             <div class="d-flex flex-row justify-content-between mb-2">
                 <div class="row">
-                    <h4 class="card-title">Data Posisi</h4>
+                    <h4 class="card-title">Data Satuan Kerja</h4>
                     <p class="card-description"> Perhatian, harap berhati-hati dalam merubah ataupun menambahkan data baru ke sistem.
                     </p>
                 </div>
@@ -66,7 +66,7 @@
     <div class="p-4">
         <input type="hidden" id="idData">
         <div class="form-group">
-            <label for="" class="text-label">Nama Posisi</label>
+            <label for="" class="text-label">Nama Satuan Kerja</label>
             <input type="text" id="name" class="form-control" placeholder="-- input disini --">
         </div>
         <div class="form-group">
@@ -124,7 +124,7 @@
             }
         });
 
-        const url = `{{ config('app.url') }}/api/v1/position/`
+        const url = `{{ config('app.url') }}/api/v1/satker/`
 
         const setLoading = (value) => {
             $('.btn').prop('disabled', value)

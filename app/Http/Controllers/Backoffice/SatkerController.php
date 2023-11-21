@@ -16,6 +16,20 @@ class SatkerController extends Controller
         $this->satkerRepo = new SatkerRepository;
     }
 
+    public function index()
+    {
+        $result = $this->satkerRepo->getAllPayload([]);
+        $result = collect($result['data'])->map(function ($item) {
+            return [
+                'id'          => $item->id,
+                'name'        => $item->name,
+                'description' => $item->description,
+                'created_at'  => $item->created_at,
+            ];
+        });
+        return view('Pages.Satker')->with('list', $result);
+    }
+
     public function getAllData()
     {
         $result = $this->satkerRepo->getAllPayload([]);
