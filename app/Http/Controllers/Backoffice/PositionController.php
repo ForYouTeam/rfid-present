@@ -16,6 +16,20 @@ class PositionController extends Controller
         $this->positionRepo = new PositionRepository;
     }
 
+    public function index()
+    {
+        $result = $this->positionRepo->getAllPayload([]);
+        $result = collect($result['data'])->map(function ($item) {
+            return [
+                'id'          => $item->id,
+                'name'        => $item->name,
+                'description' => $item->description,
+                'created_at'  => $item->created_at,
+            ];
+        });
+        return view('Pages.Position')->with('list', $result);
+    }
+
     public function getAllData()
     {
         $result = $this->positionRepo->getAllPayload([]);

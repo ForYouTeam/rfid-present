@@ -1,6 +1,6 @@
 @extends('Layouts.Base')
 @section('title')
-    : Rules
+    : Aturan
 @endsection
 @section('content')
     <div class="page-header">
@@ -90,7 +90,7 @@
                 // Handle response dari server
                 Swal.fire({
                     title: "Berhasil",
-                    text: "Datqa berhasil diperbaharui",
+                    text: "Data berhasil diperbaharui",
                     icon: "success"
                 }).then((res) => {
                     if (res.isConfirmed) {
@@ -101,7 +101,7 @@
             error: function (error) {
                 // Handle error jika terjadi
                 Swal.fire({
-                    title: "TGagal",
+                    title: "Gagal",
                     text: "Periksa koneksi anda dan coba lagi",
                     icon: "error"
                 });
