@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Backoffice\EmployeController;
 use App\Http\Controllers\Backoffice\PositionController;
 use App\Http\Controllers\Backoffice\RuleController;
 use App\Http\Controllers\Backoffice\SatkerController;
@@ -12,3 +13,4 @@ Route::get('/', function() {
 Route::get('/rules', [RuleController::class, 'index'])->name('rule.index');
 Route::get('/position', [PositionController::class, 'index'])->name('position.index');
 Route::get('/satker', [SatkerController::class, 'index'])->name('satker.index');
+Route::get('/employe', [EmployeController::class, 'index'])->name('employe.index');

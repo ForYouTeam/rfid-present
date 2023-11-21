@@ -24,7 +24,7 @@ class EmployeRequest extends FormRequest
         ];
 
         // Cek keberadaan id dalam request
-        if (!$this->has('id')) {
+        if (!$this->has('id') || !$this->input('id')) {
             $id = $this->input('id');
             $rules['rfid'][] = new UniqueExceptCurrent('employes', 'rfid', $this->input('rfid'), 'id', $id);
             $rules['nirp'][] = new UniqueExceptCurrent('employes', 'nirp', $this->input('nirp'), 'id', $id);

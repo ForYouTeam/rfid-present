@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('sex' , 25 );
             $table->foreignId('position_id')->nullable()->constrained('positions')->onDelete('set null');
             $table->foreignId('satker_id')->nullable()->constrained('satkers')->onDelete('set null');
-            $table->string('kls' , 150 );
             $table->timestamps();
         });
     }

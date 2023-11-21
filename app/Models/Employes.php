@@ -9,7 +9,7 @@ class Employes extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'rfid', 'name', 'nirp', 'nik', 'sex', 'position_id', 'satker_id', 'kls',
+        'rfid', 'name', 'nirp', 'nik', 'sex', 'position_id', 'satker_id',
         'created_at', 'updated_at'
     ];
 
