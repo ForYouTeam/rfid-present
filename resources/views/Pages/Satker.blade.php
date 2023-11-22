@@ -68,10 +68,12 @@
         <div class="form-group">
             <label for="" class="text-label">Nama Satuan Kerja</label>
             <input type="text" id="name" class="form-control" placeholder="-- input disini --">
+            <span class="small text-danger err-msg mt-1" id="err-name"></span>
         </div>
         <div class="form-group">
             <label for="" class="text-label">Deskripsi</label>
-            <textarea name="name" id="description" cols="30" class="form-control" rows="10" placeholder="-- input disini --"></textarea>
+            <textarea id="description" cols="30" class="form-control" rows="10" placeholder="-- input disini --"></textarea>
+            <span class="small text-danger err-msg mt-1" id="err-description"></span>
         </div>
     </div>
 @endsection
@@ -139,6 +141,7 @@
             $('#idData').val('')
             $('#name').val(''),
             $('#description').val('')
+            $('.err-msg').html('')
         }
 
         const sendData = async () => {
@@ -167,10 +170,15 @@
                         }
                     });
                     setLoading(false)
+                    clearData()
                 },
                 error      : function (error) {
                     if (error.status === 422) {
                         const errContent = error.responseJSON
+
+                        $.each(errContent.errors.data, (i, err) => {
+                            $(`#err-${i}`).html(err)
+                        })
 
                         Swal.fire({
                             title: errContent.response.title,
@@ -187,10 +195,11 @@
                     setLoading(false)
                 }
             });
-            clearData()
         }
 
         $(document).on('click', '.edit-data', function() {
+            clearData()
+            
             const dataId   = $(this).data('id'   )
             const dataName = $(this).data('name' )
             const dataDesc = $(this).data('desc' )

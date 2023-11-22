@@ -17,18 +17,22 @@ class EmployeRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'rfid' => ['required', 'max:20'],
-            'nirp' => ['required', 'max:20'],
-            'nik' => ['required', 'max:20'],
+            'rfid'        => ['required', 'max:20'],
+            'nirp'        => ['required', 'max:20'],
+            'nik'         => ['required', 'max:20'],
+            'name'        => ['required', 'max:250'],
+            'sex'         => ['required', 'max:250'],
+            'position_id' => ['required'],
+            'satker_id'   => ['required'],
             // ... tambahkan aturan validasi lainnya
         ];
 
         // Cek keberadaan id dalam request
         if (!$this->has('id') || !$this->input('id')) {
             $id = $this->input('id');
-            $rules['rfid'][] = new UniqueExceptCurrent('employes', 'rfid', $this->input('rfid'), 'id', $id);
-            $rules['nirp'][] = new UniqueExceptCurrent('employes', 'nirp', $this->input('nirp'), 'id', $id);
-            $rules['nik'][] = new UniqueExceptCurrent('employes', 'nik', $this->input('nik'), 'id', $id);
+            $rules['rfid'       ][] = new UniqueExceptCurrent('employes', 'rfid'       , $this->input('rfid'       ), 'id', $id);
+            $rules['nirp'       ][] = new UniqueExceptCurrent('employes', 'nirp'       , $this->input('nirp'       ), 'id', $id);
+            $rules['nik'        ][] = new UniqueExceptCurrent('employes', 'nik'        , $this->input('nik'        ), 'id', $id);
             // ... tambahkan aturan validasi lainnya yang perlu diterapkan saat mengedit
         }
 

@@ -86,20 +86,24 @@
             <div class="form-group col-lg">
                 <label for="" class="text-label">RFID Kode</label>
                 <input type="number" id="rfid" class="form-control" placeholder="-- input disini --">
+                <span class="small text-danger err-msg mt-1" id="err-rfid"></span>
             </div>
             <div class="form-group col-lg">
                 <label for="" class="text-label">Nama</label>
                 <input type="text" id="name" class="form-control" placeholder="-- input disini --">
+                <span class="small text-danger err-msg mt-1" id="err-name"></span>
             </div>
         </div>
         <div class="row">
             <div class="form-group col-lg">
                 <label for="" class="text-label">Nomor NIRP</label>
                 <input type="number" id="nirp" class="form-control" placeholder="-- input disini --">
+                <span class="small text-danger err-msg mt-1" id="err-nirp"></span>
             </div>
             <div class="form-group col-lg">
                 <label for="" class="text-label">NIK</label>
                 <input type="number" id="nik" class="form-control" placeholder="-- input disini --">
+                <span class="small text-danger err-msg mt-1" id="err-nik"></span>
             </div>
             <div class="form-group col-lg">
                 <label for="" class="text-label">Jenis Kelamin</label>
@@ -107,6 +111,7 @@
                     <option value="pria">Pria</option>
                     <option value="wanita">Wanita</option>
                 </select>
+                <span class="small text-danger err-msg mt-1" id="err-sex"></span>
             </div>
         </div>
         <div class="row">
@@ -119,6 +124,7 @@
                         " value="{{ $item['id'] }}">{{ $item['name'] }}</option>
                     @endforeach
                 </select>
+                <span class="small text-danger err-msg mt-1" id="err-position_id"></span>
             </div>
             <div class="form-group col-lg">
                 <label for="" class="text-label">Satuan Kerja</label>
@@ -129,6 +135,7 @@
                         " value="{{ $item['id'] }}">{{ $item['name'] }}</option>
                     @endforeach
                 </select>
+                <span class="small text-danger err-msg mt-1" id="err-satker_id"></span>
             </div>
         </div>
     </div>
@@ -199,10 +206,10 @@
             $('#nik').val('');
             $('#name').val('');
             $('#nirp').val('');
-            $('#sex').val('');
+            $('#sex').val('pria');
             $('#position_id').val('');
             $('#satker_id').val('');
-
+            $('.err-msg').html('')
         }
 
         const sendData = async () => {
@@ -237,10 +244,15 @@
                         }
                     });
                     setLoading(false)
+                    clearData()
                 },
                 error      : function (error) {
                     if (error.status === 422) {
                         const errContent = error.responseJSON
+
+                        $.each(errContent.errors.data, (i, err) => {
+                            $(`#err-${i}`).html(err)
+                        })
 
                         Swal.fire({
                             title: errContent.response.title,
@@ -257,10 +269,11 @@
                     setLoading(false)
                 }
             });
-            clearData()
         }
 
         $(document).on('click', '.edit-data', function() {
+            clearData()
+
             const dataId         = $(this).data('id'          );
             const dataRfid       = $(this).data('rfid'        );
             const dataName       = $(this).data('name'        );
