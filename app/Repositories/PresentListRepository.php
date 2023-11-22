@@ -31,14 +31,16 @@ class PresentListRepository implements PresentListContract
       
       $uniqData = $data
         ->clone()
-        ->distinct()
-        ->get();
+        ->get()
+        ->groupBy('employe_rfid');
+
+      // dd($uniqData);
 
       $maps = collect($uniqData)
         ->map(function ($item) use ($data) {
             $employe = $data
               ->clone()
-              ->where('m1.rfid', $item['employe_rfid']);
+              ->where('m1.rfid', $item[0]['employe_rfid']);
 
             $hadir = $employe
               ->clone()
@@ -53,11 +55,11 @@ class PresentListRepository implements PresentListContract
               ->orWhere('present_lists.description', 'LIKE', '%lambat%');
 
             return [
-              "id"           => $item['id'],
-              "present_date" => $item['present_date'],
-              "employe_rfid" => $item['employe_rfid'],
-              "employe_name" => $item['employe_name'],
-              "description"  => $item['description'],
+              "id"           => $item[0]['id'],
+              "present_date" => $item[0]['present_date'],
+              "employe_rfid" => $item[0]['employe_rfid'],
+              "employe_name" => $item[0]['employe_name'],
+              "description"  => $item[0]['description'],
               "summary"      => [
                 "hadir" => $hadir->select('present_lists.present_date')->get()->toArray(),
                 "bolos" => $bolos->select('present_lists.present_date')->get()->toArray()

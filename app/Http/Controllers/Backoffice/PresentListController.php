@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backoffice;
 
 use App\Contracts\PresentListContract;
+use App\Exports\PresentExport;
 use App\Http\Controllers\Controller;
 use App\Repositories\PresentListRepository;
 use Carbon\Carbon;
@@ -25,8 +26,12 @@ class PresentListController extends Controller
         return view('Pages.Presents')->with('list', $result);
     }
 
-    public function getAllData(array $request) {
-        $result = $this->presentRepo->getAllPayload($request);
+    public function downloadReport(Request $request) {
+        return (new PresentExport($request))->download('presentList.xlsx');
+    }
+
+    public function getAllData(Request $request) {
+        $result = $this->presentRepo->getAllPayload($request->all());
 
         return response()->json($result, $result['code']);
     }

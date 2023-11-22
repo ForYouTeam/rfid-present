@@ -18,8 +18,18 @@
                     <h4 class="card-title">Daftar Hadir Pegawai</h4>
                     <p class="card-description">Data yang ditampilkan merupakan akumulatif absensi selama sebulan.</p>
                 </div>
-                <span>
-                    <button type="button" disabled class="btn btn-primary rounded btn-edit" data-type="0">Laporan <i class="fa-solid fa-download ms-2"></i></button>
+                <span class="row align-items-center">
+                    <div class="form-group col">
+                        <label for="">Mulai</label>
+                        <input type="date" class="form-control form-control-sm" id="start_date">
+                    </div>
+                    <div class="form-group col">
+                        <label for="">Akhir</label>
+                        <input type="date" class="form-control form-control-sm" id="end_date">
+                    </div>
+                    <div class="col">
+                        <button type="button" disabled class="btn btn-primary rounded btn-edit d-flex" data-type="0">Laporan <i class="fa-solid fa-download ms-2"></i></button>
+                    </div>
                 </span>
             </div>
             <div id="skeleton">
@@ -64,7 +74,7 @@
             $('#modalOption').addClass('modal-lg')
             $('#modalTitle').html('Formulir Data')
             setTimeout(() => {
-                setLoading(false)
+               
                 $('#skeleton').attr('style', 'display:none')
                 $('#data-table').attr('style', 'display:table')
                 $('#data-table').DataTable({
@@ -94,5 +104,31 @@
                 })
             }, 1000);
         })
+
+        $(document).on('click', '.btn-edit', function() {
+              // Mengambil nilai dari atribut href
+            const startDate = $('#start_date').val()
+            const endDate   = $('#end_date'  ).val()
+
+            var urlTujuan = `{{ config('app.url') }}/api/v1/present/download?start_date=${startDate}&end_date=${endDate}`
+                
+            // Menavigasi ke URL yang telah diambil
+            window.location.href = urlTujuan;
+        })
+
+        const input1 = document.getElementById('start_date');
+        const input2 = document.getElementById('end_date');
+
+        input1.addEventListener('input', checkInputs);
+        input2.addEventListener('input', checkInputs);
+
+        function checkInputs() {
+        // Memeriksa apakah kedua input tidak null
+            if (input1.value !== '' && input2.value !== '') {
+                setLoading(false)
+            } else {
+                setLoading(true)
+            }
+        }
     </script>
 @endsection

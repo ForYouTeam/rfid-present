@@ -45,5 +45,6 @@ Route::prefix('v1/employe')->controller(EmployeController::class)->group(functio
 
 Route::prefix('v1/present')->controller(PresentListController::class)->group(function() {
     Route::get('/', 'getAllData');
+    Route::get('/download', 'downloadReport');
     Route::get('/set', 'setPresentData');
 });
