@@ -20,16 +20,53 @@ class PresentListRepository implements PresentListContract
     $this->presentModel = new Present_lists;
     $this->employeModel = new Employes;
   }
-  
+
   public function getAllPayload(array $payload)
   {
     try {
-      $data = $this->presentModel->withRelation()->get();
-      return $this->success($data, "success getting data");
+      $data = $this->presentModel
+      ->whereDate('present_lists.created_at', '>=', $payload['start_date'])
+      ->whereDate('present_lists.created_at', '<=', $payload['end_date'])
+      ->withRelation();
+      
+      $uniqData = $data
+        ->clone()
+        ->distinct()
+        ->get();
 
+      $maps = collect($uniqData)
+        ->map(function ($item) use ($data) {
+            $employe = $data
+              ->clone()
+              ->where('m1.rfid', $item['employe_rfid']);
+
+            $hadir = $employe
+              ->clone()
+              ->whereNotNull('present_lists.start_in')
+              ->whereNotNull('present_lists.start_out')
+              ->where('present_lists.description', 'NOT LIKE', '%lambat%');;
+
+            $bolos = $employe
+              ->clone()
+              ->whereNotNull('present_lists.start_in')
+              ->whereNull('present_lists.start_out')
+              ->orWhere('present_lists.description', 'LIKE', '%lambat%');
+
+            return [
+              "id"           => $item['id'],
+              "employe_rfid" => $item['employe_rfid'],
+              "employe_name" => $item['employe_name'],
+              "description"  => $item['description'],
+              "summary"      => [
+                "hadir" => $hadir->select('present_lists.present_date')->get()->toArray(),
+                "bolos" => $bolos->select('present_lists.present_date')->get()->toArray()
+              ],
+            ];
+        });
+
+      return $this->success($maps, "success getting data");
     } catch (\Throwable $th) {
-      return $this->error($th->getMessage(), 500, $th, class_basename($this), __FUNCTION__ );
-
+      return $this->error($th->getMessage(), 500, $th, class_basename($this), __FUNCTION__);
     }
   }
 
@@ -48,10 +85,8 @@ class PresentListRepository implements PresentListContract
       ];
 
       return $this->success($data, "success getting data");
-
     } catch (\Throwable $th) {
-      return $this->error($th->getMessage(), 500, $th, class_basename($this), __FUNCTION__ );
-
+      return $this->error($th->getMessage(), 500, $th, class_basename($this), __FUNCTION__);
     }
   }
 
@@ -60,10 +95,8 @@ class PresentListRepository implements PresentListContract
     try {
       $data = $this->presentModel->withRelation()->whereTime($type, $payload);
       return $this->success($data, "success getting data");
-
     } catch (\Throwable $th) {
-      return $this->error($th->getMessage(), 500, $th, class_basename($this), __FUNCTION__ );
-
+      return $this->error($th->getMessage(), 500, $th, class_basename($this), __FUNCTION__);
     }
   }
 
@@ -76,10 +109,8 @@ class PresentListRepository implements PresentListContract
       }
 
       return $this->success($data, "success getting data");
-
     } catch (\Throwable $th) {
-      return $this->error($th->getMessage(), 500, $th, class_basename($this), __FUNCTION__ );
-
+      return $this->error($th->getMessage(), 500, $th, class_basename($this), __FUNCTION__);
     }
   }
 
@@ -88,7 +119,7 @@ class PresentListRepository implements PresentListContract
     try {
       $date = Carbon::now('Asia/Singapore');
       $presentRules = Rules::where('type', 'max_present')->where('tag', $payload)->first();
-      
+
       if ($presentRules->count() >= 1) {
         if ($payload === 'ms') {
           $result = $date->format('H:i') < Carbon::createFromFormat('H:i', $presentRules['value'])->format('H:i');
@@ -100,10 +131,8 @@ class PresentListRepository implements PresentListContract
       }
 
       return false;
-
     } catch (\Throwable $th) {
-      return $this->error($th->getMessage(), 500, $th, class_basename($this), __FUNCTION__ );
-
+      return $this->error($th->getMessage(), 500, $th, class_basename($this), __FUNCTION__);
     }
   }
 
@@ -133,20 +162,20 @@ class PresentListRepository implements PresentListContract
         if ($rulesMe['code'] !== 200) {
           return $rulesMe;
         }
-   
+
         if ($rulesMe['data']) {
           return $this->error("time has not yet been recorded", 422);
         }
 
         $status = ($date->toTimeString() < $endTimeRules['value']) ? 'bolos' : 'tepat';
-        
+
         $data = [
           'start_out'   => $date->toTimeString(),
           'status'      => $status,
           'description' => $findRfidData['data']['status'] . ',' . $status,
           'updated_at'  => $date->now()
         ];
-        
+
         $result = $this->presentModel->whereId($findRfidData['data']['start']['id'])->update($data);
       }
 
@@ -162,7 +191,7 @@ class PresentListRepository implements PresentListContract
         }
 
         $employe = $this->getEmployeByRfid($payload['rfid']);
-        
+
         if ($employe['code'] !== 200) {
           return $employe;
         }
@@ -184,8 +213,7 @@ class PresentListRepository implements PresentListContract
 
       return $this->success($result, "success set present");
     } catch (\Throwable $th) {
-      return $this->error($th->getMessage(), 500, $th, class_basename($this), __FUNCTION__ );
-
+      return $this->error($th->getMessage(), 500, $th, class_basename($this), __FUNCTION__);
     }
   }
 }

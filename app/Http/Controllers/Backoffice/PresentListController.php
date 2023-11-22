@@ -15,8 +15,8 @@ class PresentListController extends Controller
         $this->presentRepo = new PresentListRepository;
     }
 
-    public function getAllData() {
-        $result = $this->presentRepo->getAllPayload([]);
+    public function getAllData(Request $request) {
+        $result = $this->presentRepo->getAllPayload($request->all());
 
         return response()->json($result, $result['code']);
     }
