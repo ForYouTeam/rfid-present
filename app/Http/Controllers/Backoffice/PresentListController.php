@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backoffice;
 use App\Contracts\PresentListContract;
 use App\Http\Controllers\Controller;
 use App\Repositories\PresentListRepository;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PresentListController extends Controller
@@ -15,8 +16,17 @@ class PresentListController extends Controller
         $this->presentRepo = new PresentListRepository;
     }
 
-    public function getAllData(Request $request) {
-        $result = $this->presentRepo->getAllPayload($request->all());
+    public function index()
+    {
+        $firstDayOfMonth = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $lastDayOfMonth = Carbon::now()->endOfMonth()->format('Y-m-d');
+
+        $result = $this->presentRepo->getAllPayload(['start_date' => $firstDayOfMonth, 'end_date' => $lastDayOfMonth]);
+        return view('Pages.Presents')->with('list', $result);
+    }
+
+    public function getAllData(array $request) {
+        $result = $this->presentRepo->getAllPayload($request);
 
         return response()->json($result, $result['code']);
     }

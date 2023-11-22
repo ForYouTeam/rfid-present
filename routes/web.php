@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Backoffice\EmployeController;
 use App\Http\Controllers\Backoffice\PositionController;
+use App\Http\Controllers\Backoffice\PresentListController;
 use App\Http\Controllers\Backoffice\RuleController;
 use App\Http\Controllers\Backoffice\SatkerController;
 use Illuminate\Support\Facades\Route;
@@ -14,3 +15,4 @@ Route::get('/rules', [RuleController::class, 'index'])->name('rule.index');
 Route::get('/position', [PositionController::class, 'index'])->name('position.index');
 Route::get('/satker', [SatkerController::class, 'index'])->name('satker.index');
 Route::get('/employe', [EmployeController::class, 'index'])->name('employe.index');
+Route::get('/presents', [PresentListController::class, 'index'])->name('presents.index');

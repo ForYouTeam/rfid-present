@@ -54,6 +54,7 @@ class PresentListRepository implements PresentListContract
 
             return [
               "id"           => $item['id'],
+              "present_date" => $item['present_date'],
               "employe_rfid" => $item['employe_rfid'],
               "employe_name" => $item['employe_name'],
               "description"  => $item['description'],

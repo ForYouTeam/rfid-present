@@ -27,7 +27,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="pages/forms/basic_elements.html">
+        <a class="nav-link" href="{{ route('presents.index') }}">
           <span class="menu-title">Absensi</span>
           <i class="mdi mdi-format-list-bulleted menu-icon"></i>
         </a>
