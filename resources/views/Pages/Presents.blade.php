@@ -43,7 +43,7 @@
                   <th>Detail</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="table-body">
                 @php
                     $no = 1;
                 @endphp
@@ -124,8 +124,29 @@
 
         function checkInputs() {
         // Memeriksa apakah kedua input tidak null
-            if (input1.value !== '' && input2.value !== '') {
+            if ((input1.value !== '' && input2.value !== '' && input1.value <= input2.value && input2.value >= input1.value)) {
                 setLoading(false)
+                $.get(`{{ config('app.url') }}/api/v1/present?start_date=${input1.value}&end_date=${input2.value}`, function(res) {
+                    const data = res.data
+
+                    $('#table-body').html('')
+                    let no = 0
+                    $.each(data, (i, d) => {
+                        no += 1
+                        $('#table-body').append(`
+                            <tr>
+                                <td style="width: 4%">${no}</td>
+                                <td class="">
+                                    <span style="width: 50px; font-size: 16px; font-weight: 500" class="text-uppercase m-0">${d.employe_name} / ${d.employe_rfid}</span>
+                                </td>
+                                <td class="row">
+                                    <span style="font-size: 16px; font-weight: 500;">Kehadiran: <b class="text-success">${d.summary.hadir.length}</b></span>
+                                    <span style="font-size: 16px; font-weight: 500; margin-top:4px">Bolos: <b class="text-danger">${d.summary.bolos.length}</b></span>
+                                </td>
+                            </tr>
+                        `)
+                    })
+                })
             } else {
                 setLoading(true)
             }
