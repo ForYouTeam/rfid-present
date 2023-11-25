@@ -46,13 +46,15 @@ class PresentListRepository implements PresentListContract
               ->clone()
               ->whereNotNull('present_lists.start_in')
               ->whereNotNull('present_lists.start_out')
-              ->where('present_lists.description', 'NOT LIKE', '%lambat%');;
+              ->where('present_lists.description', 'NOT LIKE', '%lambat%')
+              ->where('present_lists.description', 'NOT LIKE', '%bolos%');
 
             $bolos = $employe
               ->clone()
               ->whereNotNull('present_lists.start_in')
               ->whereNull('present_lists.start_out')
-              ->orWhere('present_lists.description', 'LIKE', '%lambat%');
+              ->orWhere('present_lists.description', 'LIKE', '%lambat%')
+              ->orWhere('present_lists.description', 'LIKE', '%bolos%');
 
             return [
               "id"           => $item[0]['id'],
@@ -120,15 +122,17 @@ class PresentListRepository implements PresentListContract
   public function getPresentRules($payload)
   {
     try {
-      $date = Carbon::now('Asia/Singapore');
-      $presentRules = Rules::where('type', 'max_present')->where('tag', $payload)->first();
+      $date = Carbon::now();
+      $presentRules = Rules::where('type', 'max_present')->where('tag', $payload);
+      $ms = $presentRules->clone()->where('tag', 'ms')->first();
+      $me = $presentRules->clone()->where('tag', 'me')->first();
 
       if ($presentRules->count() >= 1) {
         if ($payload === 'ms') {
-          $result = $date->format('H:i') < Carbon::createFromFormat('H:i', $presentRules['value'])->format('H:i');
+          $result = $date->format('H:i') < Carbon::createFromFormat('H:i', $ms['value'])->format('H:i');
           return $this->success($result, "success getting data");
         } else {
-          $result = $date->format('H:i') > Carbon::createFromFormat('H:i', $presentRules['value'])->format('H:i');
+          $result = $date->format('H:i') > Carbon::createFromFormat('H:i', $me['value'])->format('H:i');
           return $this->success($result, "success getting data");
         }
       }
@@ -148,6 +152,8 @@ class PresentListRepository implements PresentListContract
 
       $startTimeRules = Rules::where('tag', 's_time')->select('value')->first();
       $endTimeRules   = Rules::where('tag', 'e_time')->select('value')->first();
+      $maxStartRules = Rules::where('tag', 'ms')->select('value')->first();
+      $maxEndRules   = Rules::where('tag', 'me')->select('value')->first();
 
       if ($findRfidData['code'] !== 200) {
         return $findRfidData;
@@ -155,7 +161,7 @@ class PresentListRepository implements PresentListContract
 
       // Jika sudah melakukan absen masuk dan pulang
       if ($findRfidData['data']['start'] && $findRfidData['data']['end']) {
-        return $this->error('present has full time', 422);
+        return $this->error('Kamu telah melakukan absen hari ini', 422);
       }
 
       // Jika sudah melakukan absen masuk
@@ -167,10 +173,10 @@ class PresentListRepository implements PresentListContract
         }
 
         if ($rulesMe['data']) {
-          return $this->error("time has not yet been recorded", 422);
+          return $this->error("Absen harus dilakukan diatas jam " . $maxStartRules['value'] . " atau dibawah jam " . $maxEndRules['value'], 422);
         }
 
-        $status = ($date->toTimeString() < $endTimeRules['value']) ? 'bolos' : 'tepat';
+        $status = ($date->toTimeString() < $startTimeRules['value']) ? 'bolos' : 'tepat';
 
         $data = [
           'start_out'   => $date->toTimeString(),
@@ -190,7 +196,7 @@ class PresentListRepository implements PresentListContract
         }
 
         if ($rulesMe['data']) {
-          return $this->error("time has not yet been recorded", 422);
+          return $this->error("Absen harus dilakukan diatas jam " . $maxStartRules['value'] . " atau dibawah jam " . $maxEndRules['value'], 422);
         }
 
         $employe = $this->getEmployeByRfid($payload['rfid']);
@@ -200,7 +206,7 @@ class PresentListRepository implements PresentListContract
         }
 
         // dd($date->toTimeString());
-        $status = ($date->toTimeString() >= $startTimeRules['value']) ? 'lambat' : 'tepat';
+        $status = ($date->toTimeString() > $endTimeRules['value']) ? 'lambat' : 'tepat';
 
         $data = [
           'present_date' => $date->toDateTimeString(),
@@ -214,7 +220,9 @@ class PresentListRepository implements PresentListContract
         $result = $this->presentModel->create($data);
       }
 
-      return $this->success($result, "success set present");
+      $employeData = $this->getEmployeByRfid($payload['rfid']);
+      return $this->success([$result, $employeData], "success set present");
+
     } catch (\Throwable $th) {
       return $this->error($th->getMessage(), 500, $th, class_basename($this), __FUNCTION__);
     }

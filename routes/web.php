@@ -5,12 +5,14 @@ use App\Http\Controllers\Backoffice\PositionController;
 use App\Http\Controllers\Backoffice\PresentListController;
 use App\Http\Controllers\Backoffice\RuleController;
 use App\Http\Controllers\Backoffice\SatkerController;
+use App\Http\Controllers\Web\HomeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function() {
     return view('Layouts.Base');
 });
 
+Route::get('/home', [HomeController::class, 'index'])->name('home.index');
 Route::get('/rules', [RuleController::class, 'index'])->name('rule.index');
 Route::get('/position', [PositionController::class, 'index'])->name('position.index');
 Route::get('/satker', [SatkerController::class, 'index'])->name('satker.index');

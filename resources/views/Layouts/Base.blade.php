@@ -51,6 +51,10 @@
             @extend %loading-skeleton;
           }
         }
+
+        .my-transition {
+          transition: background-color 0.5s ease; /* Menetapkan transisi pada background-color */
+        }
     </style>
   </head>
   <body>
